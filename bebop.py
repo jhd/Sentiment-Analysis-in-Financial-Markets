@@ -88,7 +88,7 @@ def main():
     backlog = 0
     backlogList = []
     
-    with open('../s&p500-mar-1-to-apr-17.csv', 'rb') as csvfile:
+    with open('s&p500-mar-1-to-apr-17.csv', 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in reader:
             if row[0] == 'Date':
@@ -101,7 +101,7 @@ def main():
     for i in range(1, len(market)):
         returns.append(math.log(market[i]/market[i-1]))
     print returns
-    with open('../sentiment-2015-4-17.out', 'rb') as csvfile:
+    with open('sentiment-2015-4-17.out', 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in reader:
             if row[0] == 'Title':
