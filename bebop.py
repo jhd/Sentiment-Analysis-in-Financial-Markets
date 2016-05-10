@@ -61,22 +61,23 @@ def main():
                 backlogList.append(row)
 
     # TODO wipe db before write
-    env = lmdb.open('db')
+    sdEnv = lmdb.open('sentimentData')
+    rdEnv = lmdb.open('returnsData')
 
-    with env.begin(write=True) as txn:
+    with sdEnv.begin(write=True) as sdTxn, rdEnv.begin(write=True) as rdTxn:
         
         i = 0
 
         for dayReturn, daySentiment in itertools.izip(returns, sentiment):
             
             datum = caffe.proto.caffe_pb2.Datum()
-            datum.data = daySentiment
-            txn.put('{:08}'.format(i).encode('ascii'), datum)
+            datum.data = bytes(daySentiment)
+            sdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
+            datum = caffe.proto.caffe_pb2.Datum()
+            datum.data = bytes(dayReturn)
+            rdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
 
             i += 1
-
-
-
 
 if __name__ == "__main__":
     import cProfile
