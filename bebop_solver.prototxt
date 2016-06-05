@@ -1,0 +1,47 @@
+name: "Bebop"
+layer{
+    name: "Sentiment data"
+    type: "Data"
+    top: "Sentiment_Data"
+    data_param {
+        source: "sentimentData"
+        backend: LMDB
+        batch_size: 1
+    }
+}
+
+layer{
+    name: "Returns data"
+    type: "Data"
+    top: "Returns_Data"
+    data_param {
+        source: "returnsData"
+        backend: LMDB
+        batch_size: 1
+    }
+}
+
+layer{
+    name: "Hidden 1"
+    type: "InnerProduct"
+    bottom: "Sentiment_Data"
+    top: "Hidden 1"
+    inner_product_param {
+        num_output : 100
+        weight_filler {
+            type: "xavier"
+        }
+        bias_filler {
+            type: "constant"
+        }
+    }
+}
+
+layer{
+    name: "loss"
+    type: "InnerProduct"
+    bottom: "Hidden 1"
+    bottom: "Returns_Data"
+    loss_weight : 1
+    top: "loss"
+}
