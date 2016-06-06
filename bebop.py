@@ -40,11 +40,11 @@ def main():
 
             if row[1].split('T')[0] in knowndates:
                 if backlog == 0:
-                    sentiment.append(row)
+                    sentiment.append([numpy.float(i) for i in row[2:]])
                 else:   
                     denom = backlog + 1
                     backlogList.append(row)
-                    avg = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    avg = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                     while backlog >= 0:
                         for i in range(2, 12):
                             avg[i] = avg[i] + float(backlogList[backlog-1][i])
@@ -53,7 +53,7 @@ def main():
                         avg[i] = avg[i]/denom
                     avg[0] = row[0]
                     avg[1] = row[1]
-                    sentiment.append(avg)
+                    sentiment.append([numpy.float(i) for i in avg[2:]])
                     backlogList = []
                     backlog = 0
             else:
@@ -71,9 +71,15 @@ def main():
         for dayReturn, daySentiment in itertools.izip(returns, sentiment):
             
             datum = caffe.proto.caffe_pb2.Datum()
-            datum.data = bytes(daySentiment)
+            datum.channels = 1
+            datum.height = 1
+            datum.width = 10
+            datum.data = numpy.ndarray.tobytes(numpy.asarray(daySentiment))
             sdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
             datum = caffe.proto.caffe_pb2.Datum()
+            datum.channels = 1
+            datum.height = 1
+            datum.width = 10
             datum.data = bytes(dayReturn)
             rdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
 
