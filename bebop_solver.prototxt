@@ -11,7 +11,7 @@ layer{
     data_param {
         source: "sentimentData"
         backend: LMDB
-        batch_size: 10
+        batch_size: 1
     }
 }
 
@@ -26,7 +26,7 @@ layer{
     data_param {
         source: "returnsData"
         backend: LMDB
-        batch_size: 10
+        batch_size: 1
     }
 }
 
