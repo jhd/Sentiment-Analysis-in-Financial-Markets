@@ -71,15 +71,15 @@ def main():
         for dayReturn, daySentiment in itertools.izip(returns, sentiment):
             
             datum = caffe.proto.caffe_pb2.Datum()
-            datum.channels = 1
+            datum.channels = 10
             datum.height = 1
-            datum.width = 10
+            datum.width = 1
             datum.data = numpy.ndarray.tobytes(numpy.asarray(daySentiment))
             sdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
             datum = caffe.proto.caffe_pb2.Datum()
             datum.channels = 1
             datum.height = 1
-            datum.width = 10
+            datum.width = 1
             datum.data = bytes(dayReturn)
             rdTxn.put('{:08}'.format(i).encode('ascii'), datum.SerializeToString())
 

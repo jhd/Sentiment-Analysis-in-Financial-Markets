@@ -1,10 +1,45 @@
 name: "Bebop"
+
 layer{
     name: "Sentiment data"
     type: "Data"
     top: "Sentiment_Data"
+    top: "Sentiment label void"
+    include {
+        phase: TRAIN
+    }
     data_param {
         source: "sentimentData"
+        backend: LMDB
+        batch_size: 10
+    }
+}
+
+layer{
+    name: "Returns data"
+    type: "Data"
+    top: "Returns_Data"
+    top: "Return label void"
+    include {
+        phase: TRAIN
+    }
+    data_param {
+        source: "returnsData"
+        backend: LMDB
+        batch_size: 10
+    }
+}
+
+layer{
+    name: "Sentiment data"
+    type: "Data"
+    top: "Sentiment_Data"
+    top: "Sentiment label void"
+    include {
+        phase: TEST
+    }
+    data_param {
+        source: "sentimentDataTest"
         backend: LMDB
         batch_size: 1
     }
@@ -14,8 +49,12 @@ layer{
     name: "Returns data"
     type: "Data"
     top: "Returns_Data"
+    top: "Return label void"
+    include {
+        phase: TEST
+    }
     data_param {
-        source: "returnsData"
+        source: "returnsDataTest"
         backend: LMDB
         batch_size: 1
     }
@@ -38,9 +77,41 @@ layer{
 }
 
 layer{
-    name: "loss"
+    name: "Hidden 2"
     type: "InnerProduct"
     bottom: "Hidden 1"
+    top: "Hidden 2"
+    inner_product_param {
+        num_output : 100
+        weight_filler {
+            type: "xavier"
+        }
+        bias_filler {
+            type: "constant"
+        }
+    }
+}
+
+layer{
+    name: "Hidden 3"
+    type: "InnerProduct"
+    bottom: "Hidden 2"
+    top: "Hidden 3"
+    inner_product_param {
+        num_output : 1
+        weight_filler {
+            type: "xavier"
+        }
+        bias_filler {
+            type: "constant"
+        }
+    }
+}
+
+layer{
+    name: "loss"
+    type: "EuclideanLoss"
+    bottom: "Hidden 3"
     bottom: "Returns_Data"
     loss_weight : 1
     top: "loss"
